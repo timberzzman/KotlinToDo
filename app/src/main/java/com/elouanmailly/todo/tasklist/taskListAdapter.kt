@@ -2,14 +2,12 @@ package com.elouanmailly.todo.tasklist
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.elouanmailly.todo.R
 import com.elouanmailly.todo.databinding.ItemTaskBinding
 
-class TaskListAdapter(private val taskList: List<Task>) : ListAdapter<List<Task>, TaskListAdapter.TaskViewHolder>(TasksDiff) {
+class TaskListAdapter() : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(TasksDiff) {
     inner class TaskViewHolder(viewBinding: ItemTaskBinding) : RecyclerView.ViewHolder(viewBinding.root) {
         fun bind(task: Task) {
             viewBinding.taskTitle.text = task.title
@@ -23,28 +21,19 @@ class TaskListAdapter(private val taskList: List<Task>) : ListAdapter<List<Task>
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(taskList[position])
-    }
-
-    override fun getItemCount(): Int {
-        return this.taskList.size
+        holder.bind(currentList[position])
     }
 
     private lateinit var viewBinding : ItemTaskBinding
 }
 
 
-object TasksDiff : DiffUtil.ItemCallback<List<Task>>() {
-    override fun areItemsTheSame(oldItem: List<Task>, newItem: List<Task>): Boolean {
-        return oldItem === newItem
+object TasksDiff : DiffUtil.ItemCallback<Task>() {
+    override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem.id == newItem.id
     }
 
-    override fun areContentsTheSame(oldItem: List<Task>, newItem: List<Task>): Boolean {
-        for (i in 0..oldItem.size) {
-            if (oldItem[i] == newItem[i]) {
-                return false
-            }
-        }
-        return true
+    override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+        return oldItem == newItem
     }
 }
