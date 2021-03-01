@@ -12,6 +12,9 @@ class TaskListAdapter() : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(Task
         fun bind(task: Task) {
             viewBinding.taskTitle.text = task.title
             viewBinding.taskDescription.text = task.description
+            viewBinding.removeTaskButton.setOnClickListener {
+                onDeleteTask?.invoke(task)
+            }
         }
     }
 
@@ -21,10 +24,11 @@ class TaskListAdapter() : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(Task
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        holder.bind(currentList[position])
+        holder.bind(getItem(position))
     }
 
     private lateinit var viewBinding : ItemTaskBinding
+    var onDeleteTask: ((Task) -> Unit)? = null
 }
 
 

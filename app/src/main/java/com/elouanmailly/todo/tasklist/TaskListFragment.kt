@@ -1,6 +1,7 @@
 package com.elouanmailly.todo.tasklist
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,6 +29,10 @@ class TaskListFragment : Fragment() {
         viewBinding.addTaskButton.setOnClickListener {
             val task = Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}")
             taskList.add(taskList.size, task)
+            adapter.submitList(taskList.toList())
+        }
+        adapter.onDeleteTask = { task ->
+            taskList.remove(task)
             adapter.submitList(taskList.toList())
         }
     }
