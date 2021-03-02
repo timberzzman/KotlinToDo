@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.elouanmailly.todo.databinding.FragmentTaskListBinding
 import com.elouanmailly.todo.task.TaskActivity
 import com.elouanmailly.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
+import com.elouanmailly.todo.task.TaskActivity.Companion.EDIT_TASK_REQUEST_CODE
 import java.util.UUID
 
 class TaskListFragment : Fragment() {
@@ -37,6 +38,11 @@ class TaskListFragment : Fragment() {
             taskList.remove(task)
             adapter.submitList(taskList.toList())
         }
+        adapter.onEditTask = { task ->
+            val intent = Intent(activity, TaskActivity::class.java)
+            intent.putExtra("editedTask", task)
+            startActivityForResult(intent, EDIT_TASK_REQUEST_CODE)
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -45,6 +51,13 @@ class TaskListFragment : Fragment() {
             val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
                 taskList.add(taskList.size, task)
+                adapter.submitList(taskList.toList())
+            }
+        } else if (resultCode == RESULT_OK && requestCode == EDIT_TASK_REQUEST_CODE) {
+            val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
+            if (task != null) {
+                val position = taskList.indexOfFirst { it -> it.id == task.id }
+                taskList[position] = task
                 adapter.submitList(taskList.toList())
             }
         }

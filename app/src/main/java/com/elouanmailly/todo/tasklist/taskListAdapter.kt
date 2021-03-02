@@ -15,6 +15,9 @@ class TaskListAdapter() : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(Task
             viewBinding.removeTaskButton.setOnClickListener {
                 onDeleteTask?.invoke(task)
             }
+            viewBinding.editTaskButton.setOnClickListener {
+                onEditTask?.invoke(task)
+            }
         }
     }
 
@@ -29,6 +32,7 @@ class TaskListAdapter() : ListAdapter<Task, TaskListAdapter.TaskViewHolder>(Task
 
     private lateinit var viewBinding : ItemTaskBinding
     var onDeleteTask: ((Task) -> Unit)? = null
+    var onEditTask: ((Task) -> Unit)? = null
 }
 
 
