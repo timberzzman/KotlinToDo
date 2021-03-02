@@ -11,11 +11,15 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.registerForActivityResult
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elouanmailly.todo.databinding.FragmentTaskListBinding
+import com.elouanmailly.todo.network.Api
+import com.elouanmailly.todo.network.TasksRepository
 import com.elouanmailly.todo.task.TaskActivity
 import com.elouanmailly.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
 import com.elouanmailly.todo.task.TaskActivity.Companion.EDIT_TASK_REQUEST_CODE
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 class TaskListFragment : Fragment() {
@@ -32,6 +36,9 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(activity)
         viewBinding.recyclerView.adapter = adapter
+        tasksRepository.taskList.observe(viewLifecycleOwner) { list ->
+            adapter.submitList(list.toList())
+        }
         adapter.submitList(taskList.toList())
         viewBinding.addTaskButton.setOnClickListener {
             val intent = Intent(activity, TaskActivity::class.java)
@@ -63,8 +70,18 @@ class TaskListFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        lifecycleScope.launch {
+            val userInfo = Api.userService.getInfo().body()!!
+            viewBinding.fragmentTaskListTitle.text = "${userInfo.firstName} ${userInfo.lastName}"
+            tasksRepository.refresh()
+        }
+    }
+
     private lateinit var viewBinding: FragmentTaskListBinding
     private var adapter : TaskListAdapter = TaskListAdapter()
+    private val tasksRepository = TasksRepository()
     private val taskList = mutableListOf(
         Task(id = "id_1", title = "Task 1", description = "description 1"),
         Task(id = "id_2", title = "Task 2"),
