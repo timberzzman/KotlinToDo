@@ -7,6 +7,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.registerForActivityResult
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elouanmailly.todo.databinding.FragmentTaskListBinding
@@ -32,7 +35,7 @@ class TaskListFragment : Fragment() {
         adapter.submitList(taskList.toList())
         viewBinding.addTaskButton.setOnClickListener {
             val intent = Intent(activity, TaskActivity::class.java)
-            startActivityForResult(intent, ADD_TASK_REQUEST_CODE)
+            startForResult.launch(intent)
         }
         adapter.onDeleteTask = { task ->
             taskList.remove(task)
@@ -41,23 +44,20 @@ class TaskListFragment : Fragment() {
         adapter.onEditTask = { task ->
             val intent = Intent(activity, TaskActivity::class.java)
             intent.putExtra("editedTask", task)
-            startActivityForResult(intent, EDIT_TASK_REQUEST_CODE)
+            startForResult.launch(intent)
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == ADD_TASK_REQUEST_CODE) {
-            val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
-            if (task != null) {
-                taskList.add(taskList.size, task)
-                adapter.submitList(taskList.toList())
-            }
-        } else if (resultCode == RESULT_OK && requestCode == EDIT_TASK_REQUEST_CODE) {
-            val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
+    private val startForResult = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+        if (result.resultCode == RESULT_OK) {
+            val task = result.data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
                 val position = taskList.indexOfFirst { it -> it.id == task.id }
-                taskList[position] = task
+                if (position  == -1) {
+                    taskList.add(taskList.size, task)
+                } else {
+                    taskList[position] = task
+                }
                 adapter.submitList(taskList.toList())
             }
         }

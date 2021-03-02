@@ -3,15 +3,9 @@ package com.elouanmailly.todo.task
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
 import com.elouanmailly.todo.MainActivity
-import com.elouanmailly.todo.R
 import com.elouanmailly.todo.databinding.ActivityTaskBinding
-import com.elouanmailly.todo.databinding.FragmentTaskListBinding
 import com.elouanmailly.todo.tasklist.Task
 import java.util.*
 
@@ -24,14 +18,14 @@ class TaskActivity : AppCompatActivity() {
         binding.titleInputField.addTextChangedListener {
             val titleText = binding.titleInputField.text
 
-            binding.createTaskButton.isEnabled = titleText != null && titleText.length > 3
+            binding.validTaskButton.isEnabled = titleText != null && titleText.length > 3
         }
         if (toEditTask != null) {
             binding.titleInputField.setText(toEditTask.title)
             binding.descriptionInputField.setText(toEditTask.description)
         }
         setContentView(view)
-        binding.createTaskButton.setOnClickListener{
+        binding.validTaskButton.setOnClickListener{
             val title : String = binding.titleInputField.text.toString()
             val description : String = binding.descriptionInputField.text.toString()
             val id = toEditTask?.id ?: UUID.randomUUID().toString()
