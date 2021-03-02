@@ -3,13 +3,11 @@ package com.elouanmailly.todo.tasklist
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -17,10 +15,7 @@ import com.elouanmailly.todo.databinding.FragmentTaskListBinding
 import com.elouanmailly.todo.network.Api
 import com.elouanmailly.todo.network.TasksRepository
 import com.elouanmailly.todo.task.TaskActivity
-import com.elouanmailly.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
-import com.elouanmailly.todo.task.TaskActivity.Companion.EDIT_TASK_REQUEST_CODE
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 class TaskListFragment : Fragment() {
     override fun onCreateView(
@@ -39,14 +34,14 @@ class TaskListFragment : Fragment() {
         tasksRepository.taskList.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list.toList())
         }
-        adapter.submitList(taskList.toList())
         viewBinding.addTaskButton.setOnClickListener {
             val intent = Intent(activity, TaskActivity::class.java)
             startForResult.launch(intent)
         }
         adapter.onDeleteTask = { task ->
-            taskList.remove(task)
-            adapter.submitList(taskList.toList())
+                lifecycleScope.launch {
+                tasksRepository.delete(task.id)
+            }
         }
         adapter.onEditTask = { task ->
             val intent = Intent(activity, TaskActivity::class.java)
@@ -59,13 +54,16 @@ class TaskListFragment : Fragment() {
         if (result.resultCode == RESULT_OK) {
             val task = result.data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
-                val position = taskList.indexOfFirst { it -> it.id == task.id }
+                val position = tasksRepository.taskList.value?.indexOfFirst { it.id == task.id }
                 if (position  == -1) {
-                    taskList.add(taskList.size, task)
+                    lifecycleScope.launch {
+                        tasksRepository.create(task)
+                    }
                 } else {
-                    taskList[position] = task
+                    lifecycleScope.launch {
+                        tasksRepository.updateTask(task)
+                    }
                 }
-                adapter.submitList(taskList.toList())
             }
         }
     }
@@ -82,9 +80,4 @@ class TaskListFragment : Fragment() {
     private lateinit var viewBinding: FragmentTaskListBinding
     private var adapter : TaskListAdapter = TaskListAdapter()
     private val tasksRepository = TasksRepository()
-    private val taskList = mutableListOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3")
-    )
 }
