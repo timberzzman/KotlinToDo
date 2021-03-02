@@ -1,5 +1,6 @@
 package com.elouanmailly.todo.tasklist
 
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -40,11 +41,13 @@ class TaskListFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
-        if (task != null) {
-            taskList.add(taskList.size, task)
+        if (resultCode == RESULT_OK && requestCode == ADD_TASK_REQUEST_CODE) {
+            val task = data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
+            if (task != null) {
+                taskList.add(taskList.size, task)
+                adapter.submitList(taskList.toList())
+            }
         }
-        adapter.submitList(taskList.toList())
     }
 
     private lateinit var viewBinding: FragmentTaskListBinding

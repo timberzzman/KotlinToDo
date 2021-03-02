@@ -25,7 +25,7 @@ class TaskActivity : AppCompatActivity() {
             val newTask = Task(id = UUID.randomUUID().toString(), title, description)
             val intent = Intent(this, MainActivity::class.java)
             intent.putExtra(TASK_KEY, newTask)
-            this.setResult(666)
+            this.setResult(RESULT_OK, intent)
             this.finish()
         }
     }
