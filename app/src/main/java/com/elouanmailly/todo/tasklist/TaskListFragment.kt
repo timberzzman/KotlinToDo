@@ -9,14 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.registerForActivityResult
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elouanmailly.todo.databinding.FragmentTaskListBinding
 import com.elouanmailly.todo.task.TaskActivity
-import com.elouanmailly.todo.task.TaskActivity.Companion.ADD_TASK_REQUEST_CODE
-import com.elouanmailly.todo.task.TaskActivity.Companion.EDIT_TASK_REQUEST_CODE
-import java.util.UUID
 
 class TaskListFragment : Fragment() {
     override fun onCreateView(

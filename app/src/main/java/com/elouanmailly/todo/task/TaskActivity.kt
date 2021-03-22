@@ -39,7 +39,5 @@ class TaskActivity : AppCompatActivity() {
     private lateinit var binding: ActivityTaskBinding
     companion object {
         const val TASK_KEY: String = "NEW_TASK"
-        const val ADD_TASK_REQUEST_CODE = 666
-        const val EDIT_TASK_REQUEST_CODE = 42
     }
 }
