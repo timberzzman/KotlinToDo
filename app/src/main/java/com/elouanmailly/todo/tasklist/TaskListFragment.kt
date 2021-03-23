@@ -9,13 +9,14 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.elouanmailly.todo.databinding.FragmentTaskListBinding
 import com.elouanmailly.todo.network.Api
-import com.elouanmailly.todo.network.TasksRepository
 import com.elouanmailly.todo.task.TaskActivity
 import kotlinx.coroutines.launch
+import com.elouanmailly.todo.network.TaskListViewModel
 
 class TaskListFragment : Fragment() {
     override fun onCreateView(
@@ -31,7 +32,7 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewBinding.recyclerView.layoutManager = LinearLayoutManager(activity)
         viewBinding.recyclerView.adapter = adapter
-        tasksRepository.taskList.observe(viewLifecycleOwner) { list ->
+        viewModel.taskList.observe(viewLifecycleOwner) { list ->
             adapter.submitList(list.toList())
         }
         viewBinding.addTaskButton.setOnClickListener {
@@ -40,7 +41,7 @@ class TaskListFragment : Fragment() {
         }
         adapter.onDeleteTask = { task ->
                 lifecycleScope.launch {
-                tasksRepository.delete(task.id)
+                viewModel.deleteTask(task)
             }
         }
         adapter.onEditTask = { task ->
@@ -54,15 +55,11 @@ class TaskListFragment : Fragment() {
         if (result.resultCode == RESULT_OK) {
             val task = result.data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
             if (task != null) {
-                val position = tasksRepository.taskList.value?.indexOfFirst { it.id == task.id }
+                val position = viewModel.taskList.value?.indexOfFirst { it.id == task.id }
                 if (position  == -1) {
-                    lifecycleScope.launch {
-                        tasksRepository.create(task)
-                    }
+                    viewModel.addTask(task)
                 } else {
-                    lifecycleScope.launch {
-                        tasksRepository.updateTask(task)
-                    }
+                    viewModel.editTask(task)
                 }
             }
         }
@@ -73,11 +70,11 @@ class TaskListFragment : Fragment() {
         lifecycleScope.launch {
             val userInfo = Api.userService.getInfo().body()!!
             viewBinding.fragmentTaskListTitle.text = "${userInfo.firstName} ${userInfo.lastName}"
-            tasksRepository.refresh()
+            viewModel.loadTasks()
         }
     }
 
     private lateinit var viewBinding: FragmentTaskListBinding
     private var adapter : TaskListAdapter = TaskListAdapter()
-    private val tasksRepository = TasksRepository()
+    private val viewModel: TaskListViewModel by viewModels()
 }
