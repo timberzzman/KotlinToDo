@@ -1,5 +1,7 @@
 package com.elouanmailly.todo.authentication
 
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.provider.Settings.System.putString
@@ -13,6 +15,9 @@ import androidx.core.content.edit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleCoroutineScope
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import com.elouanmailly.todo.MainActivity
+import com.elouanmailly.todo.R
 import com.elouanmailly.todo.SHARED_PREF_TOKEN_KEY
 import com.elouanmailly.todo.databinding.FragmentLoginBinding
 import com.elouanmailly.todo.network.Api
@@ -39,21 +44,18 @@ class LoginFragment : Fragment() {
             val email = viewBinding.loginFragmentEmailInput.text.toString()
             val password = viewBinding.loginFragmentPasswordInput.text.toString()
             val form = LoginForm(email, password)
-            Log.d("LOGINFRAGMENT", form.toString())
             lifecycleScope.launch {
-                Log.d("LOGINFRAGMENT", "LAUNCHING API REQUEST")
                 val response = Api.INSTANCE.userService.login(form)
-                Log.d("LOGINFRAGMENT", response.toString())
                 if (response.isSuccessful) {
-                    Log.d("LOGINFRAGMENT", "Request is successful")
-                    Log.d("LOGINFRAGMENT", response.body().toString())
                     PreferenceManager.getDefaultSharedPreferences(context).edit {
                         putString(SHARED_PREF_TOKEN_KEY, response.body()?.token)
                     }
+                    findNavController().navigate(R.id.action_loginFragment_to_mainActivity)
                 } else {
-                    Toast.makeText(context, "An error has occured", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, "Your credentials are invalid", Toast.LENGTH_LONG).show()
                 }
             }
+
         }
     }
 

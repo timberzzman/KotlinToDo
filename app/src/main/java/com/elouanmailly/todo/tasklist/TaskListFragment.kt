@@ -3,6 +3,7 @@ package com.elouanmailly.todo.tasklist
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +23,7 @@ import com.elouanmailly.todo.network.UserInfoViewModel
 import com.elouanmailly.todo.userinfo.UserInfoActivity
 
 class TaskListFragment : Fragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,6 +71,7 @@ class TaskListFragment : Fragment() {
             if (result.resultCode == RESULT_OK) {
                 val task = result.data?.getSerializableExtra(TaskActivity.TASK_KEY) as? Task
                 if (task != null) {
+                    Log.d("TASKLIST", viewModel.taskList.value.toString())
                     val position = viewModel.taskList.value?.indexOfFirst { it.id == task.id }
                     if (position == -1) {
                         viewModel.addTask(task)

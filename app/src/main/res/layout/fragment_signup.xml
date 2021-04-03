@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,42 +11,46 @@
         android:layout_height="match_parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText6"
+            android:id="@+id/signupFragmentFirstnameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Firstname"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="263dp" />
+            app:layout_constraintBottom_toTopOf="@+id/signupFragmentLastnameInput"
+            tools:layout_editor_absoluteX="0dp" />
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/editText5"
+            android:id="@+id/signupFragmentLastnameInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Lastname"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="81dp" />
+            app:layout_constraintBottom_toTopOf="@+id/signupFragmentEmailInput"
+            tools:layout_editor_absoluteX="0dp" />
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signupFragmentEmailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
-            tools:layout_editor_absoluteX="0dp"
-            tools:layout_editor_absoluteY="196dp" />
+            app:layout_constraintBottom_toTopOf="@+id/signupFragmentPasswordInput"
+            tools:layout_editor_absoluteX="0dp" />
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/signupFragmentPasswordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            tools:layout_editor_absoluteX="16dp"
-            tools:layout_editor_absoluteY="139dp" />
+            app:layout_constraintBottom_toTopOf="@+id/signupFragmentSignupButton"
+            tools:layout_editor_absoluteX="16dp" />
 
         <Button
-            android:id="@+id/button3"
+            android:id="@+id/signupFragmentSignupButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="265dp"
             android:text="Sign up"
-            tools:layout_editor_absoluteX="161dp"
-            tools:layout_editor_absoluteY="418dp" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
