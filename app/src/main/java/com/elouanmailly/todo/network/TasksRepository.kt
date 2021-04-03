@@ -3,7 +3,7 @@ package com.elouanmailly.todo.network
 import com.elouanmailly.todo.tasklist.Task
 
 class TasksRepository {
-    private val tasksWebService = Api.tasksWebService
+    private val tasksWebService = Api.INSTANCE.tasksWebService
 
     suspend fun refresh(): List<Task>? {
         val tasksResponse = tasksWebService.getTasks()

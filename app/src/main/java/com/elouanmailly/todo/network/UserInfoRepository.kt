@@ -3,7 +3,7 @@ package com.elouanmailly.todo.network
 import okhttp3.MultipartBody
 
 class UserInfoRepository {
-    private val userWebService = Api.userService
+    private val userWebService = Api.INSTANCE.userService
 
     suspend fun refresh(): UserInfo? {
         val response = userWebService.getInfo()
